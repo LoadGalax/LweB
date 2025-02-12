@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" id="theme-style">
+    <style>
+        /* Add animation styles */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .flash-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: #61dafb;
+            color: #282c34;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(97, 218, 251, 0.5);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .flash-message.error {
+            background-color: #e74c3c;
+            color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+        <a href="/" {% if request.path == '/' %}class="active"{% endif %}>Home</a>
+        <a href="/gallery" {% if request.path == '/gallery' %}class="active"{% endif %}>Gallery</a>
+        <a href="/logout">Logout</a> 
+    </div>
+
+    <!-- Flash message container -->
+    <div class="flash-message-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="login-container">
+        <h1>Login</h1>
+        <form action="/login" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br>
+            <button type="submit">Login</button>
+        </form>
+        
+        {% if request.path == '/logout' %}
+            <a href="/login">Back to Login</a>
+        {% endif %}
+    </div>
+
+    <!-- JavaScript to remove flash message after animation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 4000); // Remove the message after 4 seconds
+            });
+        });
+    </script>
+</body>
+</html>

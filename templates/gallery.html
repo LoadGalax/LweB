@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gallery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" id="theme-style">
+   
+</head>
+<body>
+    <!-- Menu Bar -->
+    <div class="menu-bar">
+        <a href="/gallery" {% if request.path == '/gallery' %}class="active"{% endif %}>Gallery</a>
+        <a href="/logout">Logout</a> 
+    </div>
+    <!-- Pagination -->
+    <div class="pagination">
+        {% for i in range((images|length / 9)|int + 1) %}
+            <span class="page-link" onclick="showPage({{i}})">{{i+1}}</span>
+        {% endfor %}
+    </div>
+    <div class="gallery-container">
+        <!-- Images will be dynamically inserted here -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% for i in range((images|length / 9)|int + 1) %}
+            <span class="page-link" onclick="showPage({{i}})">{{i+1}}</span>
+        {% endfor %}
+    </div>
+
+
+    <script>
+        const images = {{ images | tojson }};
+        let currentPage = 0;
+
+        function showPage(pageIndex) {
+            const galleryContainer = document.querySelector('.gallery-container');
+            galleryContainer.innerHTML = ''; // Clear previous images
+
+            const startIndex = pageIndex * 9;
+            const endIndex = Math.min(startIndex + 9, images.length);
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const imageElement = document.createElement('div');
+                imageElement.classList.add('gallery-item');
+
+                const linkElement = document.createElement('a');
+                linkElement.href = "/img/" + images[i];
+                linkElement.classList.add('image-link');
+
+                const imgElement = document.createElement('img');
+                imgElement.src = "/img/" + images[i];
+                imgElement.alt = images[i];
+                imgElement.classList.add('zoom-image');
+
+                linkElement.appendChild(imgElement);
+                imageElement.appendChild(linkElement);
+
+                galleryContainer.appendChild(imageElement);
+            }
+
+            currentPage = pageIndex;
+        }
+
+        // Show the first page by default
+        showPage(0);
+    </script>
+</body>
+</html>
